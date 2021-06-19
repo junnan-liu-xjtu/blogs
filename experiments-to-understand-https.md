@@ -1,0 +1,5 @@
+#1.什么是Https
+
+先来看一下[维基百科](https://en.wikipedia.org/wiki/HTTPS)上面的定义：
+>HypertextTransferProtocolSecure(HTTPS)isanextensionoftheHypertextTransferProtocol(HTTP).Itisusedforsecurecommunicationoveracomputernetwork,andiswidelyusedontheInternet.InHTTPS,thecommunicationprotocolisencryptedusingTransportLayerSecurity(TLS)or,formerly,SecureSocketsLayer(SSL).TheprotocolisthereforealsoreferredtoasHTTPoverTLS,orHTTPoverSSL.
+
