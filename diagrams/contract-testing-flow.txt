@@ -1,0 +1,25 @@
+title Contract testing flow
+
+participant Together
+participant Consumer
+
+participant Common Place
+participant Provider
+
+Together->Consumer:Contract roughly agreed.
+
+activate Consumer
+
+Consumer->Common Place: generate and\nupload contract
+
+deactivate Consumer
+
+parallel
+Provider->Common Place:fetch contract
+Consumer->Consumer: business logics
+activate Consumer
+
+parallel off
+
+Provider->Provider: business logic to\nverify contract
+activate Provider

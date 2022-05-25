@@ -1,0 +1,25 @@
+title Contract first flow
+
+participant Together
+participant Consumer
+participant Common Repo
+participant Provider
+
+
+Together->Common Repo:submit contract
+Common Repo->Common Repo: trigger CI\n
+
+activate Common Repo
+Common Repo->Common Repo: generate sdks
+deactivate Common Repo
+
+parallel
+Consumer->Common Repo:fetch client sdk
+Provider->Common Repo:fetch server sdk
+parallel off
+parallel
+activate Consumer
+activate Provider
+Consumer->Consumer: business logics
+Provider->Provider: business logics
+parallel off
