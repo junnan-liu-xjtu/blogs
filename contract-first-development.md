@@ -35,7 +35,7 @@
 
 ## 契约先行开发
 
-这里说的契约先行，指的是在写所有代码之前，把我们沟通好的契约手写出来，或者通过一些图形化工具生成出来，比如生成一个 openapi yaml 文档，这样沟通的产出足够直观。把这个文档放在代码库中维护，然后以它为依据，通过自动化流水线生成各方的沟通组件(sdk)，以 java + spring 为例，消费方可以生成封装好的 restTemplate 和 RequestDto/ResponseDto，服务方可以生成对应的 Controller 和 RequestDto/ResponseDto，并根据 openapi 文档中声明的非空字段、格式、长度等限制，自动添加注解，利用 spring 机制自动校验，省时省力省心。我们用到的工具是 [openapi generator](https://github.com/OpenAPITools/openapi-generator)，它可以根据 openapi 文档生成多种语言的 client 端代码、server 端代码、server stubs 代码等作为 library，服务双方直接引入 library 就可以进行通信，各自关注业务逻辑即可。
+这里说的契约先行，指的是在写所有代码之前，把我们沟通好的契约手写出来，或者通过一些图形化工具生成出来，比如手写或生成一个 openapi yaml 文档，这样沟通的产出足够直观。把这个文档放在代码库中维护，然后以它为依据，通过自动化流水线生成各方的沟通组件(sdk)，以 java + spring 为例，消费方可以生成封装好的 restTemplate 和 RequestDto/ResponseDto，服务方可以生成对应的 Controller 和 RequestDto/ResponseDto，并根据 openapi 文档中声明的非空字段、格式、长度等限制，自动添加注解，利用 spring 机制自动校验，省时省力省心。我们用到的工具是 [openapi generator](https://github.com/OpenAPITools/openapi-generator)，它可以根据 openapi 文档生成多种语言的 client 端代码、server 端代码、server stubs 代码等作为 library，服务双方直接引入 library 就可以进行通信，各自关注业务逻辑即可。
 
 ## 契约先行模式下，团队的沟通闭环
 
@@ -71,7 +71,7 @@
 
 在服务间合作开发的过程中，为了维护契约的有效性，适用契约测试可以让不同团队之间的开发在一定程度上解耦。在一定场景下，比如契约足够简单直接，开发使用的技术能很容易地适用生成的代码，开发过程中已经有足够的集成测试或组件测试时，使用契约先行的合作方式，可以缩短团队间的反馈闭环，减少等待时间，提升开发效率。
 
-## 其他问题
+<!-- ## 其他问题
 
 #### 消费方不可见问题
 
@@ -86,5 +86,5 @@
 
 
 契约维护与更新
-通过契约和代码生成避免无效请求和无效响应
+通过契约和代码生成避免无效请求和无效响应 -->
 
