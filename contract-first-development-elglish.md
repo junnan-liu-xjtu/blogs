@@ -3,7 +3,7 @@
 
 ## Problems of Contract
 
-With the advantages of less coupling, improved scalability, easier deployments, to name but a few, microservice pattern is widely adopted. The communication previously performed within memory of the monolith is now in a format of http requests and message queues along with others. Such communication requires agreements among different ends, typically between service consumers and providers, including message format, authentication mechanism, etc. These agreements are documented as contracts.
+With the advantages of less coupling, improved scalability, easier deployments, to name but a few, microservice pattern is widely adopted. The communication previously performed within memory of the monolith is now in the formats of http requests and message queues along with others. Such communication requires agreements among different ends, typically between service consumers and providers, including message format, authentication mechanism, etc. These agreements are documented as contracts.
 
 Along with the evolution of the product, contracts could vary frequently, and the endpoints in the development environment can be incompatible to each other or even down for maintenance, which is creating dependencies and blockers among teams. Additionally, it's pretty common that different teams have different pace of development, different priorities, so that the problem of contract maintenance with different versions is becoming ubiquitous. A production-safe way of collaboration that can reduce dependencies between service consumers and providers, to keep them independently moving forward, is fairly essential.
 
