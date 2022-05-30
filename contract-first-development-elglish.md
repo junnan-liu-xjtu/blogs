@@ -67,11 +67,11 @@ Comparing to the flow of contract testing, the contract is earlier consolidated 
 
 Contract-First Development is not a silver bullet. It's more efficient in specific cases.
 
-**When the contract is straightforward enough** Some nullability check, format, simple mapping among fields, etc. These are good reasons to use generated code and start with detailed contract consolidation. However, if your contracts include a lot of business specifications that are difficult to describe in openapi docs, writing separate contract tests tells a better story, and it leads to better maintainability.
+**When the contract is straightforward enough.** Some nullability check, format, simple mapping among fields, etc. These are good reasons to use generated code and start with detailed contract consolidation. However, if your contracts include a lot of business specifications that are difficult to describe in openapi docs, writing separate contract tests tells a better story, and it leads to better maintainability.
 
-**Our language/framework gets well supported by openapi generator** If we need to pay too much effort generating code, or we need too much customization, then this method is not efficient.
+**Our language/framework gets well supported by openapi generator.** If we need to pay too much effort generating code, or we need too much customization, then this method is not efficient.
 
-**We already have comprehensive integration tests** Although the aforementioned generated code can be utilized automatically by our framework, it cannot prevent us from more production incidents if we don't expose our error cases earlier than release. Those error cases resulting in production errors sometimes cannot be exposed through unit tests. For example, a generated `@NotNull` in a `RequestDto` will work when spring is started, which means the corresponding cases should be covered by integration tests.
+**We already have comprehensive integration tests.** Although the aforementioned generated code can be utilized automatically by our framework, it cannot prevent us from more production incidents if we don't expose our error cases earlier than release. Those error cases resulting in production errors sometimes cannot be exposed through unit tests. For example, a generated `@NotNull` in a `RequestDto` will work when spring is started, which means the corresponding cases should be covered by integration tests.
 
 
 ## Costs
