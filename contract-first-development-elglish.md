@@ -32,7 +32,7 @@ The adoption of contract testing does help a lot of teams to improve their effic
 
 While your team is really writing contract tests, people tend to feel that there are a lot of straightforward contracts, such as nullability, string format, they are easy to note in the doc and super easy to implement, but require trivial contract tests.
 
-More importantly, our generated contract could be more concise than expected, for example we don't necessarily write every 400 or 401 test cases for every single endpoint, but they are truly worth being documented, or they can be more detailed than expected due to more edge cases are recognized. Every time we need to modify the contract, we need to discuss again, then write consumer-side contract tests again, and the provider is blocked again waiting for the contract to be generated. And this results in inefficiency.
+More importantly, our generated contract could be more concise than expected, for example we don't necessarily write every 400 or 401 test cases for every single endpoint, but they are truly worth being documented, or they can be more detailed than expected due to more edge cases being recognized. Every time we need to modify the contract, we need to discuss again, then write consumer-side contract tests again, and the provider is blocked again waiting for the contract to be generated. And this results in inefficiency.
 
 
 ## Keys to Solve the Problem
