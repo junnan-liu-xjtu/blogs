@@ -1,3 +1,3 @@
-# 博客草稿
+# My blog drafts
 
-常来看看，常来写写
+I hope it can be continuously updated
