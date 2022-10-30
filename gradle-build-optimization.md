@@ -93,8 +93,7 @@ CMD [""]
 
 #### 2.2 转机：跨 agent 共享 cache
 
-此时我们能想到的是，如果 build cache 能够被 pipeline 随身携带就好了，任何一个 agent 都有相关的 build
-cache，将大幅提升效率。幸运的是，[export docker build cache](https://docs.docker.com/engine/reference/commandline/buildx_build/#cache-to) 提供了这样的可能。
+此时我们能想到的是，如果 build cache 能够被 pipeline 随身携带就好了，任何一个 agent 都有相关的 build cache，将大幅提升效率。幸运的是，[export docker build cache](https://docs.docker.com/engine/reference/commandline/buildx_build/#cache-to) 提供了这样的可能。
 
 在 cache 导出以后，再通过各 pipeline 的互传 artifact 机制，或者利用可以上传和下载文件的插件，进行跨 agent 的传输即可实现。至于互传 cache 的指令或插件，它的责任很简单，就是在每个 pipeline step 执行前，将之前上传的 cache 文件夹下载到本地，并在 step 执行以后，将 cache 继续上传即可。上传和下载 cache 的目的地可能都是在内网，或在同一网络环境内，如果速度明显超过 gradle build 从 maven repository 下载依赖的速度，那么这种方法着实可行。需要注意的是，在 repo 较多的团队中，这些依赖可能要根据种类或 repo 进行区分，如当前 repo 有其专用的 cache，否则下载不相关的依赖也会消耗不必要的时间。
 
