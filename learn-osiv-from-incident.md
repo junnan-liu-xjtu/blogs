@@ -74,8 +74,6 @@ HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
 
 Hikari 连接池的默认状态是有10个连接，当前是有10个空闲。服务在本地启动了以后，我们先发送一个请求，过了一会连接池的状态更新如下：
 
-服务在本地启动了以后，我们先发送一个请求，过了一会连接池的状态更新如下：
-
 ```bash
 HikariPool-1 - Pool stats (total=10, active=1, idle=9, waiting=0)
 ```
