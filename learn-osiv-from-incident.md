@@ -28,22 +28,22 @@ public void changeName(String id) {
 上面的代码我们一般称为数据库和外界系统的混合 IO，是我们日常开发中极力避免的，可是为什么还是发生了呢？话不多说快去看一眼代码吧，以下是简化逻辑。
 
 ```java
-// OtpController
+// Controller
 @PostMapping("/one-time-passwords")
-public ResponseEntity<RequestOtpResponse> requestOtp(RequestOtpRequest request) {
+public ResponseEntity<SendOtpResponse> sendOtp(SendOtpRequest request) {
     // 1. save db
-    String otp = otpService.generateAndSaveOtp(request.getPhoneNumber());
+    String otp = otpService.createOtp(request.getTarget());
     // 2. outgoing request
     otpSender.send(otp);
-    return ResponseEntity.ok(RequestOtpResponse.from(otp));
+    return ResponseEntity.ok(SendOtpResponse.from(otp));
 }
-// OtpService
+// Service
 @Transactional
-public String generateAndSaveOtp(String phoneNumber) {
-    String otp = otpGenerator.generateNew();
-    return otpRepository.save(new OTP(phoneNumber, otp));
+public String createOtp(String target) {
+    String code = createNew();
+    return otpRepository.save(new OTP(target, code));
 }
-// OtpSender
+// SmsSender
 public void send(String code) {
     sendHttpRequest(code);
 }
