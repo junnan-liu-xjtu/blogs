@@ -108,7 +108,7 @@ HikariPool-1 - Connection is not available, request timed out after 30002ms.
 ```java
 // OtpController
 @PostMapping("/one-time-passwords")
-public ResponseEntity<RequestOtpResponse> requestOtp(RequestOtpRequest request) throws InterruptedException {
+public ResponseEntity<SendOtpResponse> sendOtp(SendOtpRequest request) throws InterruptedException {
     log.info("sleep 1 start");
     Thread.sleep(30_000);
     log.info("sleep 1 end");
@@ -118,7 +118,7 @@ public ResponseEntity<RequestOtpResponse> requestOtp(RequestOtpRequest request) 
     log.info("sleep 2 start");
     Thread.sleep(30_000);
     log.info("sleep 2 end");
-    return ResponseEntity.ok(RequestOtpResponse.from("hello"));
+    return ResponseEntity.ok(SendOtpResponse.from("hello"));
 }
 ```
 
