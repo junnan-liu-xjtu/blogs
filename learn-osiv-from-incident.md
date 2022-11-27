@@ -8,20 +8,30 @@
 Unable to acquire JDBC Connection; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection] with root cause java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
 ```
 
-数据库连接池请求不到，等了30秒然后挂掉了。好吧，初步猜测是哪些请求处理太慢了，把数据库连接全部占着，导致其他请求等待数据库连接池超时引发的吧。这时候新的告警又来了：“访问外界系统请求失败率提升”。进去看一眼，发现是我们在调用第三方验证码系统的请求，失败率已逐渐提高至100%，全是502，他们挂了。这个时候我们自己的服务恢复了，请求响应时间回到了正常水平，失败率也逐渐只剩下发验证码的 api 居高不下。看一眼这个调用第三方服务的 api 监控，发现在过去的10分钟里，该 api 响应极慢，后来逐渐崩掉。
+数据库连接池请求不到，等了30秒然后挂掉了。好吧，初步猜测是哪些请求处理太慢了，把数据库连接全部占着，导致其他请求等待数据库连接池超时引发的吧。这时候新的告警又来了：“访问外界系统请求失败率提升”。进去看一眼，发现是我们在调用第三方验证码系统的请求，失败率已逐渐提高至100%，全是502，他们挂了。神奇的是，这个时候我们自己的服务恢复了，请求响应时间回到了正常水平，失败率也逐渐只剩下发验证码的 api 居高不下。看一眼这个调用第三方服务的 api 监控，发现在过去的10分钟里，该 api 响应极慢，后来逐渐崩掉。
 
 ## 初步猜测与验证
 
-乍一看事故的原因似乎已经很明晰了，上面的现象也基本符合关于数据库连接池的猜测。在第三方服务完全挂掉之前，响应时间很长的时候，该 api 对数据库连接超时占用，其他线程都需要等待数据库连接，导致响应时间变长甚至失败。等到第三方服务挂掉后，由于我们能直接返回失败，不会继续占用数据库连接，所以其他接口又好了起来。
+乍一看事故的原因似乎已经很明晰了，上面的现象也基本符合关于数据库连接池的猜测。如下方代码所示，在一个 `@Transactional` 中，先进行了数据库的调用，然后又进行了对外界服务 `name-service` 的调用，然后更新名字。在第三方服务完全挂掉之前，响应时间很长的时候，该 api 对数据库连接超时占用，这样的请求多起来以后，数据库连接池会被占满。其他线程都需要等待数据库连接，导致响应时间变长，或因等待超时而失败。等到第三方服务挂掉后，由于我们能直接拿到失败响应，便不会继续占用数据库连接，所以其他接口又好了起来。
 
-奇怪的是这种混合数据库和外界系统的 IO 是我们日常开发中极力避免的，为什么还是发生了呢？话不多说快去看一眼代码吧，以下是简化逻辑。
-
+```java
+@Transactional
+public SomeResponse changeName(String id) {
+    String abc = someRepository.findById(id);
+    String newName = nameServiceClient.fetchNewName(id);
+    abc.setName(newName);
+}
 ```
+
+上面的代码我们一般称为数据库和外界系统的混合 IO，是我们日常开发中极力避免的，可是为什么还是发生了呢？话不多说快去看一眼代码吧，以下是简化逻辑。
+
+```java
 // OtpController
-@PostMapping("/otps")
+@PostMapping("/one-time-passwords")
 public ResponseEntity<RequestOtpResponse> requestOtp(RequestOtpRequest request) {
+    // 1. save db
     String otp = otpService.generateAndSaveOtp(request.getPhoneNumber());
-    log.debug("Token saved.");
+    // 2. outgoing request
     otpSender.send(otp);
     return ResponseEntity.ok(RequestOtpResponse.from(otp));
 }
@@ -62,17 +72,13 @@ HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
 
 Hikari 连接池的默认状态是有10个连接，当前是有10个空闲，然后我们用本地 postman 进行请求，由于我们已经手动延长了该接口的响应时间，postman 一直在等待，从日志我们也马上看到了读写数据库操作完成，
 
-```
-Token saved.
-```
-
-过了一会连接池的状态更新如下：
+服务在本地启动了以后，我们先发送一个请求，过了一会连接池的状态更新如下：
 
 ```
 HikariPool-1 - Pool stats (total=10, active=1, idle=9, waiting=0)
 ```
 
-我们发现，即使过了很长时间，仍旧有一个连接被占用着。很奇怪但它似乎能够反映生产环境上的情况，让我们多加几个请求，试一下能否产生同样的报错。由于连接池一共10个连接，我们先试上11个请求，如果到目前为止我们的理论正确的话，它们足够产生相应的报错了。30秒过后，果然：
+我们发现，即使过了很长时间，仍有一个连接被占用着。很奇怪但它能够反映生产环境上的情况，让我们多加几个请求，试一下能否产生同样的报错。由于连接池一共10个连接，我们先试上11个请求，如果到目前为止我们的理论正确的话，它们足够产生相应的报错了。另外10个请求发出，30秒过后，果然：
 
 ```
 java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30002ms.
