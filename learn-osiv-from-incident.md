@@ -83,8 +83,7 @@ HikariPool-1 - Pool stats (total=10, active=1, idle=9, waiting=0)
 我们发现，即使过了很长时间，仍有一个连接被占用着。很奇怪但它能够反映生产环境上的情况，让我们多加几个请求，试一下能否产生同样的报错。由于连接池一共10个连接，我们先试上11个请求，如果到目前为止我们的理论正确的话，它们足够产生相应的报错了。另外10个请求发出，30秒过后，果然：
 
 ```bash
-HikariPool-1 - Pool stats (total=10, active=10, idle=0, waiting=1)
-HikariPool-1 - Timeout failure stats (total=10, active=10, idle=0, waiting=0)
+HikariPool-1 - Timeout failure stats (total=10, active=10, idle=0, waiting=1)
 HikariPool-1 - Connection is not available, request timed out after 30002ms.
 ```
 
