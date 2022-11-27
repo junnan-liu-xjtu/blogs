@@ -126,7 +126,7 @@ public ResponseEntity<SendOtpResponse> sendOtp(SendOtpRequest request) throws In
 
 ```bash
 # 进入请求
-Mapped to xxxxxx#requestOtp()
+Mapped to xxxxxx#sendOtp()
 # 启用 OpenEntityManagerInViewInterceptor
 Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
 sleep 1 start
@@ -168,4 +168,4 @@ Completed 200 OK
 
 ## 其他
 
-如前面所说，Session per request 可以让开发者更关注业务，减少在管理数据库连接上浪费时间，从而提升开发效率。多数情况确实是这样的，但也正是因为一些工具的过于便捷，导致一些本该由开发者积极思考的问题被忽略。正如这次的数据库连接池问题，或许默认关闭 OSIV，可以更好地让开发者去主动思考连接的建立与释放呢。
+如前面所说，Session per request 可以让开发者更关注业务，减少在管理数据库连接上浪费时间，从而提升开发效率。多数情况确实是这样的，但也正是因为一些工具的过于便捷，导致一些本该由开发者积极思考的问题被忽略。正如这次的数据库连接池问题，或许默认关闭 OSIV，可以更好地让开发者去主动思考连接的建立与释放呢？
