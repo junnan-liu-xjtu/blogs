@@ -83,7 +83,8 @@ Now that we are able to pass caches among CI agents, why not pass [gradle depend
 With gradle caches on CI agents, all we need to do is to mount the gradle cache to the build container.
 
 ```shell
-docker run -v $(pwd):/app -v "$HOME/.gradle:/root/.gradle" -w /app eclipse-temurin:11-jre ./gradlew clean build
+docker run -v $(pwd):/app -v "$HOME/.gradle:/root/.gradle" \
+    -w /app eclipse-temurin:11-jre ./gradlew clean build
 ```
 
 By this solution, our gradle build time came to 1 minute 7 seconds. Adding the average time of 15 seconds for uploading and downloading the caches, we got the 1 minute 22 seconds total time, which is slightly faster than docker build cache. A more important benefit of this solution is that we can reuse the downloaded caches as much as possible for almost every build, which will be much more efficient than leveraging docker build cache.
@@ -159,7 +160,7 @@ Are you still satisfied with the sliced startup of Spring at the hands of `@WebM
 
 Then how can we maximize the benefits of context caching? The answer is to try to avoid changing the `ApplicationContext` by annotations such as `@MockBean`, `@SpyBean`, `@DirtiesContext`, `@TestPropertySource`, `@DynamicPropertySource`.
 
-On this purpose, when checking our existing tests, we found we had `@SpringBootTest`, `@WebMvcTest`, and `@DataJpaTest`. When we executed the tests the logs show that Spring framework was started 3 times, which took a lot of time. In order to reuse `ApplicationContext`, we changed them to `@SpringBootTest` (change 1), to avoid restarting Spring during different tests. Then we found we had `@MockBean`. Our solution is to add the mocked bean to a test configuration file (change 2), so that they are the same for every integration test, and the `ApplicationContext` was kept the same in different tests. The test code are as follows.
+On this purpose, when checking our existing tests, we found we had `@SpringBootTest`, `@WebMvcTest`, and `@DataJpaTest`. When we executed the tests the logs show that Spring framework was started 3 times, which took a lot of time. In order to reuse `ApplicationContext`, we changed them to `@SpringBootTest` (change #1), to avoid restarting Spring during different tests. Then we found we had `@MockBean`. Our solution is to add the mocked bean to a test configuration file (change #2), so that they are the same for every integration test, and the `ApplicationContext` was kept the same in different tests. The test code are as follows.
 
 Before change:
 
@@ -179,11 +180,11 @@ class ATest(@Autowired val mvc: MockMvc) {
 After change:
 
 ```kotlin
-@SpringBootTest  // change 1
-@AutoConfigureMockMvc  // change 1
+@SpringBootTest  // change #1
+@AutoConfigureMockMvc  // change #1
 class ATest(
     @Autowired val mvc: MockMvc,
-    @Autowired val bService: BService // change 2
+    @Autowired val bService: BService // change #2
 ) {
   @Test
   fun blahblah() {
@@ -191,7 +192,7 @@ class ATest(
   }
 }
 
-@Configuration // change 2
+@Configuration // change #2
 class TestConfiguration {
   @Bean
   fun bService(): BService {
